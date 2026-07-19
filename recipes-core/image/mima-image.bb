@@ -1,0 +1,5 @@
+LICENSE_FLAGS_ACCEPTED = "synaptics-killswitch"
+ENABLE_UART = "1"
+RPI_USE_U_BOOT = "1"
+IMAGE_FSTYPES = "wic.bz2 wic.bmap"
+GPU_MEM = "16"
