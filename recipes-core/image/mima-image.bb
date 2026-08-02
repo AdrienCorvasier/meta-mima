@@ -1,4 +1,6 @@
-LICENSE_FLAGS_ACCEPTED = "synaptics-killswitch"
+inherit core-image
+
+LICENSE = "CLOSED"
 ENABLE_UART = "1"
 RPI_USE_U_BOOT = "1"
 IMAGE_FSTYPES = "wic.bz2 wic.bmap"
