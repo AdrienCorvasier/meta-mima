@@ -1,0 +1,13 @@
+[Unit]
+Description=PNI TCM3 relay daemon (feeds the pni-tcm3_sysfs kernel module)
+After=dev-pni-tcm3-0.device
+Wants=dev-pni-tcm3-0.device
+
+[Service]
+EnvironmentFile=-/etc/default/pni-tcm3d
+ExecStart=/usr/bin/tcm3d ${PNI-TCM3D_SERIAL_DEVICE} ${PNI-TCM3D_CTL_DEVICE} ${PNI-TCM3D_BAUD_RATE}
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

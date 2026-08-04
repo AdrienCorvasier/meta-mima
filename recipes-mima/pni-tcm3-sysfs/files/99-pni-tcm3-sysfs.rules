@@ -1,0 +1,7 @@
+# Tag /dev/pni-tcm3-0 so systemd-udevd generates dev-pni-tcm3-0.device;
+# pni-tcm3d.service orders itself after that unit (After=/Wants=
+# dev-pni-tcm3-0.device) and would otherwise never start, since misc
+# devices aren't tagged for systemd by udev's built-in rules. The device
+# lives under the "misc" subsystem (it's registered via misc_register()),
+# so match on its kernel name rather than the sysfs-attribute class.
+SUBSYSTEM=="misc", KERNEL=="pni-tcm3-0", TAG+="systemd"
