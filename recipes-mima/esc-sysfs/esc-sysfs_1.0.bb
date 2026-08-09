@@ -38,6 +38,12 @@ do_install() {
     install -d ${D}${sysconfdir}/modules-load.d
     echo "esc_sysfs" > ${D}${sysconfdir}/modules-load.d/esc-sysfs.conf
 
+    # This board has 5 physical ESCs; esc_sysfs defaults to 1 instance
+    # unless told otherwise. Must match the escd@0..escd@4 instances
+    # enabled in the esc-driver recipe.
+    install -d ${D}${sysconfdir}/modprobe.d
+    echo "options esc_sysfs num_escs=5" > ${D}${sysconfdir}/modprobe.d/esc-sysfs.conf
+
     # Without this, systemd-udevd never tags /dev/esc0 for systemd, so
     # dev-esc0.device is never created and escd.service (which orders itself
     # After=/Wants= that unit) sits stuck in dependency-wait forever.
@@ -45,5 +51,6 @@ do_install() {
     install -m 0644 ${UNPACKDIR}/99-esc-sysfs.rules ${D}${nonarch_base_libdir}/udev/rules.d/99-esc-sysfs.rules
 }
 
-FILES:${PN} += "${sysconfdir}/modules-load.d/esc-sysfs.conf ${nonarch_base_libdir}/udev/rules.d/99-esc-sysfs.rules"
-CONFFILES:${PN} += "${sysconfdir}/modules-load.d/esc-sysfs.conf"
+FILES:${PN} += "${sysconfdir}/modules-load.d/esc-sysfs.conf ${sysconfdir}/modprobe.d/esc-sysfs.conf \
+                 ${nonarch_base_libdir}/udev/rules.d/99-esc-sysfs.rules"
+CONFFILES:${PN} += "${sysconfdir}/modules-load.d/esc-sysfs.conf ${sysconfdir}/modprobe.d/esc-sysfs.conf"

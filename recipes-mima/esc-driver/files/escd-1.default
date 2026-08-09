@@ -1,0 +1,16 @@
+# Serial device connected to ESC #1's B-G431B-ESC1 (ST-Link VCP, or a direct
+# UART if the board is wired straight to the host's UART pins instead).
+#
+# CAUTION: with 5 identical boards enumerating over USB, /dev/ttyACMN
+# assignment is enumeration-order dependent and NOT guaranteed stable
+# across reboots/reconnects. Once the boards are physically wired, replace
+# this with a stable /dev/serial/by-id/... symlink (each ST-Link exposes a
+# unique USB serial number) instead of relying on the raw ttyACM index.
+ESCD_SERIAL_DEVICE=/dev/ttyACM1
+
+# Character device created by the esc_sysfs kernel module for this instance.
+ESCD_CTL_DEVICE=/dev/esc1
+
+# UART baud rate configured by the mima-esc firmware
+# (thirdparty/mima-esc/Src/main.c: huart2.Init.BaudRate).
+ESCD_BAUD_RATE=1843200

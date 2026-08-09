@@ -10,8 +10,12 @@ HOMEPAGE = "https://github.com/AdrienCorvasier/mima-b-g431-esc1-driver"
 LICENSE = "CLOSED"
 
 SRC_URI = "git://github.com/AdrienCorvasier/mima-b-g431-esc1-driver.git;protocol=https;branch=master \
-           file://escd.service \
-           file://escd.default \
+           file://escd@.service \
+           file://escd-0.default \
+           file://escd-1.default \
+           file://escd-2.default \
+           file://escd-3.default \
+           file://escd-4.default \
            "
 # Pin to a real commit/tag before using this recipe outside of active development.
 SRCREV = "${AUTOREV}"
@@ -24,20 +28,30 @@ EXTRA_OECMAKE = " \
     -DESC_DRIVER_BUILD_CLI=ON \
     "
 
-SYSTEMD_SERVICE:${PN} = "escd.service"
+# One escd instance per physical ESC (must match esc-sysfs's num_escs=5
+# modprobe.d setting: each instance N relays /dev/escN, created by that
+# module for N in [0, num_escs)).
+SYSTEMD_SERVICE:${PN} = "escd@0.service escd@1.service escd@2.service escd@3.service escd@4.service"
 SYSTEMD_AUTO_ENABLE:${PN} = "enable"
 
 do_install:append() {
     install -d ${D}${systemd_system_unitdir}
-    install -m 0644 ${UNPACKDIR}/escd.service ${D}${systemd_system_unitdir}/escd.service
+    install -m 0644 ${UNPACKDIR}/escd@.service ${D}${systemd_system_unitdir}/escd@.service
 
     install -d ${D}${sysconfdir}/default
-    install -m 0644 ${UNPACKDIR}/escd.default ${D}${sysconfdir}/default/escd
+    for i in 0 1 2 3 4; do
+        install -m 0644 ${UNPACKDIR}/escd-$i.default ${D}${sysconfdir}/default/escd-$i
+    done
 }
 
-FILES:${PN} += "${systemd_system_unitdir}/escd.service ${sysconfdir}/default/escd"
-CONFFILES:${PN} += "${sysconfdir}/default/escd"
+FILES:${PN} += "${systemd_system_unitdir}/escd@.service ${sysconfdir}/default/escd-0 \
+                 ${sysconfdir}/default/escd-1 ${sysconfdir}/default/escd-2 \
+                 ${sysconfdir}/default/escd-3 ${sysconfdir}/default/escd-4"
+CONFFILES:${PN} += "${sysconfdir}/default/escd-0 ${sysconfdir}/default/escd-1 \
+                     ${sysconfdir}/default/escd-2 ${sysconfdir}/default/escd-3 \
+                     ${sysconfdir}/default/escd-4"
 
-# esc-sysfs creates /dev/esc0; escd waits on it (After=dev-esc0.device) but
-# doesn't hard-depend on the kernel module being present at install time.
+# esc-sysfs creates /dev/esc0..esc4; each escd@N waits on its own
+# dev-escN.device (After=/Wants=) but doesn't hard-depend on the kernel
+# module being present at install time.
 RRECOMMENDS:${PN} += "esc-sysfs"

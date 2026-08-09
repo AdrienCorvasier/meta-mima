@@ -1,10 +1,10 @@
 [Unit]
-Description=B-G431B-ESC1 ASPEP/MCP relay daemon (feeds the esc_sysfs kernel module)
-After=dev-esc0.device
-Wants=dev-esc0.device
+Description=B-G431B-ESC1 ASPEP/MCP relay daemon %i (feeds the esc_sysfs kernel module)
+After=dev-esc%i.device
+Wants=dev-esc%i.device
 
 [Service]
-EnvironmentFile=-/etc/default/escd
+EnvironmentFile=-/etc/default/escd-%i
 ExecStart=/usr/bin/escd ${ESCD_SERIAL_DEVICE} ${ESCD_CTL_DEVICE} ${ESCD_BAUD_RATE}
 Restart=on-failure
 RestartSec=2

@@ -9,4 +9,5 @@ IMAGE_INSTALL:append = "    esc-driver \
                             pni-tcm3-driver \
                             pni-tcm3-sysfs \
                             i2c-tools \
+                            mima-core \
 "
